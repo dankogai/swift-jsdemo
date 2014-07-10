@@ -41,28 +41,37 @@ ctx.set("ary", [1,2,3])
 jsv = ctx.evaluateScript("bar = foo.map(function(n){return n*n})")
 println(ctx.get("bar"))
 
-ctx.set("square", { (o:AnyObject!)->AnyObject! in
+// block w/ no argument
+ctx.set("hello") { ()->AnyObject! in
+    return "Hello, JS! I am Swift."
+}
+println(ctx.evaluateScript("hello"))
+println(ctx.evaluateScript("hello()"))
+// block w/ 1 argument
+ctx.set("square") { (o:AnyObject!)->AnyObject! in
     if let x = o as? Double {
         return x * x
     }
     return nil
-})
+}
 println(ctx.evaluateScript("square"))
 println(ctx.evaluateScript("square()"))
 println(ctx.evaluateScript("square(6)"))
-ctx.set("multiply", { (o:AnyObject!, p:AnyObject!)->AnyObject! in
+// block w/ 2 arguments
+ctx.set("multiply") { (o:AnyObject!, p:AnyObject!)->AnyObject! in
     if let x = o as? Double {
         if let y = p as? Double {
             return x * y
         }
     }
     return nil
-})
+}
 println(ctx.evaluateScript("multiply"))
 println(ctx.evaluateScript("multiply()"))
 println(ctx.evaluateScript("multiply(6)"))
 println(ctx.evaluateScript("multiply(6,7)"))
-ctx.set("sum", { (o:AnyObject!)->AnyObject! in
+// for any more arguments, just use array instead
+ctx.set("sum") { (o:AnyObject!)->AnyObject! in
     if let a = o as? NSArray {
         var result = 0.0
         for v in a {
@@ -75,5 +84,5 @@ ctx.set("sum", { (o:AnyObject!)->AnyObject! in
         return result
     }
     return nil
-})
+}
 println(ctx.evaluateScript("sum([0,1,2,3,4,5,6,7,8,9])"))
