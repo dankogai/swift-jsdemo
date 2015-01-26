@@ -1,4 +1,4 @@
 swift-jsdemo
 ============
 
-Use JavaScriptCore from Swift
+A demo to show how to use JavaScriptCore from Swift.
