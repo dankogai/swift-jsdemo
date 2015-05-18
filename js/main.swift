@@ -5,13 +5,16 @@
 //  Created by Dan Kogai on 6/16/14.
 //  Copyright (c) 2014 Dan Kogai. All rights reserved.
 //
+//  Swift 1.2 or better required
 
 import JavaScriptCore
+
 let ctx = JSContext()
 let ary = [0, 1, 2, 3]
 var jsv = ctx.evaluateScript(
     "\(ary).map(function(n){return n*n})"
 )
+
 println(jsv)
 var a = jsv.toArray()
 println(a)
@@ -21,35 +24,40 @@ jsv = ctx.evaluateScript("this")
 println(jsv)
 
 typealias ID = AnyObject!
+
 extension JSContext {
-    func fetch(key:NSString)->JSValue {
+    func fetch(key:String)->JSValue {
         return getJSVinJSC(self, key)
     }
-    func store(key:NSString, _ val:ID) {
+    func store(key:String, _ val:ID) {
         setJSVinJSC(self, key, val)
     }
-    func store(key:NSString, _ blk:()->ID) {
+    // Yikes.  Swift 1.2 and its JavaScriptCore no longer allows method overloding by type
+    func setb0(key:String, _ blk:()->ID) {
         setB0JSVinJSC(self, key, blk)
     }
-    func store(key:NSString, _ blk:(ID)->ID) {
+    func setb1(key:String, _ blk:(ID)->ID) {
         setB1JSVinJSC(self, key, blk)
     }
-    func store(key:NSString, _ blk:(ID,ID)->ID) {
+    func setb2(key:String, _ blk:(ID,ID)->ID) {
         setB2JSVinJSC(self, key, blk)
     }
 }
-ctx.store("ary", [1,2,3])
-jsv = ctx.evaluateScript("bar=foo.map(function(n){return n*n})")
-println(ctx.fetch("bar"))
+
+ctx.store("ary", [0,1,2,3])
+println(ctx.fetch("ary"))
+jsv = ctx.evaluateScript("ary2=ary.map(function(n){return n*n})")
+println(ctx.fetch("ary2"))
 
 // block w/ no argument
-ctx.store("hello") { ()->ID in
+ctx.setb0("hello") { ()->ID in
     return "Hello, JS! I am Swift."
 }
 println(ctx.evaluateScript("hello"))
 println(ctx.evaluateScript("hello()"))
+
 // block w/ 1 argument
-ctx.store("square") { (o:ID)->ID in
+ctx.setb1("square") { (o:ID)->ID in
     if let x = o as? Double {
         return x * x
     }
@@ -59,7 +67,7 @@ println(ctx.evaluateScript("square"))
 println(ctx.evaluateScript("square()"))
 println(ctx.evaluateScript("square(6)"))
 // block w/ 2 arguments
-ctx.store("multiply") { (o:ID, p:ID)->ID in
+ctx.setb2("multiply") { (o:ID, p:ID)->ID in
     if let x = o as? Double {
         if let y = p as? Double {
             return x * y
@@ -72,7 +80,7 @@ println(ctx.evaluateScript("multiply()"))
 println(ctx.evaluateScript("multiply(6)"))
 println(ctx.evaluateScript("multiply(6,7)"))
 // for any more arguments, just use array instead
-ctx.store("sum") { (o:ID)->ID in
+ctx.setb1("sum") { (o:ID)->ID in
     if let a = o as? NSArray {
         var result = 0.0
         for v in a {
@@ -86,4 +94,4 @@ ctx.store("sum") { (o:ID)->ID in
     }
     return nil
 }
-println(ctx.evaluateScript("sum([0,1,2,3,4,5,6,7,8,9])"))
+println(ctx.evaluateScript("sum([0,1,2,3,4,5,6,7,8,9,10])"))
