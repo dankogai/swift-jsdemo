@@ -15,13 +15,13 @@ var jsv = ctx.evaluateScript(
     "\(ary).map(function(n){return n*n})"
 )
 
-println(jsv)
+print(jsv)
 var a = jsv.toArray()
-println(a)
+print(a)
 jsv = ctx.evaluateScript("nonsense * nonsense")
-println(jsv)
+print(jsv)
 jsv = ctx.evaluateScript("this")
-println(jsv)
+print(jsv)
 
 typealias ID = AnyObject!
 
@@ -45,16 +45,16 @@ extension JSContext {
 }
 
 ctx.store("ary", [0,1,2,3])
-println(ctx.fetch("ary"))
+print(ctx.fetch("ary"))
 jsv = ctx.evaluateScript("ary2=ary.map(function(n){return n*n})")
-println(ctx.fetch("ary2"))
+print(ctx.fetch("ary2"))
 
 // block w/ no argument
 ctx.setb0("hello") { ()->ID in
     return "Hello, JS! I am Swift."
 }
-println(ctx.evaluateScript("hello"))
-println(ctx.evaluateScript("hello()"))
+print(ctx.evaluateScript("hello"))
+print(ctx.evaluateScript("hello()"))
 
 // block w/ 1 argument
 ctx.setb1("square") { (o:ID)->ID in
@@ -63,9 +63,9 @@ ctx.setb1("square") { (o:ID)->ID in
     }
     return nil
 }
-println(ctx.evaluateScript("square"))
-println(ctx.evaluateScript("square()"))
-println(ctx.evaluateScript("square(6)"))
+print(ctx.evaluateScript("square"))
+print(ctx.evaluateScript("square()"))
+print(ctx.evaluateScript("square(6)"))
 // block w/ 2 arguments
 ctx.setb2("multiply") { (o:ID, p:ID)->ID in
     if let x = o as? Double {
@@ -75,10 +75,10 @@ ctx.setb2("multiply") { (o:ID, p:ID)->ID in
     }
     return nil
 }
-println(ctx.evaluateScript("multiply"))
-println(ctx.evaluateScript("multiply()"))
-println(ctx.evaluateScript("multiply(6)"))
-println(ctx.evaluateScript("multiply(6,7)"))
+print(ctx.evaluateScript("multiply"))
+print(ctx.evaluateScript("multiply()"))
+print(ctx.evaluateScript("multiply(6)"))
+print(ctx.evaluateScript("multiply(6,7)"))
 // for any more arguments, just use array instead
 ctx.setb1("sum") { (o:ID)->ID in
     if let a = o as? NSArray {
@@ -94,4 +94,4 @@ ctx.setb1("sum") { (o:ID)->ID in
     }
     return nil
 }
-println(ctx.evaluateScript("sum([0,1,2,3,4,5,6,7,8,9,10])"))
+print(ctx.evaluateScript("sum([0,1,2,3,4,5,6,7,8,9,10])"))
